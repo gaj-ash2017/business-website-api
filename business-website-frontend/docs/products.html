@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Contact Us - My Business</title>
+    <title>Products - My Business</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
@@ -15,27 +15,32 @@
         <a href="about.html">About Us</a>
         <a class="admin-only" href="add-product.html">Add Product</a>
         <a href="products.html">View Products</a>
-        <a class="admin-only" href="products.html?admin=true"
-          >Manage Products</a
-        >
+        <a href="admin.html">Manage Products</a>
         <a href="contact.html">Contact Form</a>
         <a href="contact-details.html">Our Contact Details</a>
       </nav>
     </header>
 
     <main>
-      <h2>Contact Us</h2>
-      <form id="contact-form">
-        <label>Name:<input type="text" name="name" required /></label>
-        <label>Email:<input type="email" name="email" required /></label>
-        <label>Message:<textarea name="message" required></textarea></label>
-        <button type="submit">Send Message</button>
-      </form>
+      <h2>Our Products</h2>
+
+      <!-- Sort control (admin only) -->
+      <div id="sort-container">
+        <label
+          >Sort by:
+          <select id="sort-select">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="az">A → Z</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Product grid -->
+      <div id="product-list" class="grid"></div>
     </main>
 
-    <footer>
-      <p>&copy; 2025 My Business</p>
-    </footer>
+    <footer>...</footer>
 
     <script src="js/script.js"></script>
   </body>

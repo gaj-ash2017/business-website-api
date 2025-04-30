@@ -1,34 +1,41 @@
-// public_html/js/script.v4.js
+// docs/js/script.js
 
-// Core functionality for product form and display — debug logs removed for production
+// ─── API Base URL (production) ───
+const API_BASE = "https://business-website-api.onrender.com";
 
-const API_BASE = "https://business-api.onrender.com";
+// ─── URL Parameters & Admin Detection ───
 const urlParams = new URLSearchParams(window.location.search);
+// allow an explicit global override:
 const isAdmin =
+  window.IS_ADMIN === true ||
   urlParams.get("admin") === "true" ||
-  ["localhost", "127.0.0.1"].includes(location.hostname);
+  ["localhost", "127.0.0.1"].includes(window.location.hostname);
 
+// ─── DOM Ready ───
 window.addEventListener("DOMContentLoaded", () => {
-  // show/hide admin-only UI
-  document
-    .querySelectorAll(".admin-only")
-    .forEach((el) => (el.style.display = isAdmin ? "inline-block" : "none"));
+  // Show or hide admin-only UI
+  document.querySelectorAll(".admin-only").forEach((el) => {
+    el.style.display = isAdmin ? "inline-block" : "none";
+  });
 
+  // If edit mode, prefill the form
   const editId = urlParams.get("editId");
   if (editId) {
     prefillForm(editId).then(() => {
-      const title = document.getElementById("page-title");
-      if (title) title.textContent = "Edit Product";
+      const titleEl = document.getElementById("page-title");
+      if (titleEl) titleEl.textContent = "Edit Product";
       const btn = document.querySelector("button[type=submit]");
       if (btn) btn.textContent = "Update Product";
     });
   }
 
+  // Wire up form, sorting, and initial display
   handleProductForm();
   setupSorting();
   displayProducts();
 });
 
+// ─── Prefill Form for Edit ───
 async function prefillForm(id) {
   const nameIn = document.getElementById("product-name");
   const descIn = document.getElementById("product-description");
@@ -36,18 +43,21 @@ async function prefillForm(id) {
 
   try {
     const resp = await fetch(`${API_BASE}/products.json`);
-    const productsArray = await resp.json();
+    const products = await resp.json();
     const idNum = Number(id);
     let prod =
-      productsArray.find((p) => p.id === idNum) ||
-      productsArray.find((p) => p.id.toString() === id);
+      products.find((p) => p.id === idNum) ||
+      products.find((p) => p.id.toString() === id);
     if (prod) {
       nameIn.value = prod.name;
       descIn.value = prod.description;
     }
-  } catch (_) {}
+  } catch (err) {
+    console.error("prefillForm error", err);
+  }
 }
 
+// ─── Form Submit Handler ───
 async function onSubmit(e) {
   e.preventDefault();
   const form = document.getElementById("product-form");
@@ -63,6 +73,7 @@ async function onSubmit(e) {
   try {
     const editId = urlParams.get("editId");
     if (editId) {
+      // Update existing product
       let imagePath;
       if (file) {
         const fd = new FormData();
@@ -83,6 +94,7 @@ async function onSubmit(e) {
       });
       if (!upd.ok) throw new Error("Update failed");
     } else {
+      // Create new product
       if (!file) return alert("Please select an image.");
       const fd2 = new FormData();
       fd2.append("name", name);
@@ -96,10 +108,12 @@ async function onSubmit(e) {
     }
     window.location.href = "confirm.html";
   } catch (err) {
+    console.error("Form submit error", err);
     alert(err.message);
   }
 }
 
+// ─── Attach Form Handler ───
 function handleProductForm() {
   const form = document.getElementById("product-form");
   if (!form) return;
@@ -107,19 +121,24 @@ function handleProductForm() {
   form.addEventListener("submit", onSubmit);
 }
 
+// ─── Sorting Setup ───
 function setupSorting() {
   const sel = document.getElementById("sort-select");
   if (!sel) return;
   sel.addEventListener("change", () => displayProducts(sel.value));
 }
 
+// ─── Display Products ───
 async function displayProducts(sortKey = "newest") {
-  const c = document.getElementById("product-list");
-  if (!c) return;
-  c.innerHTML = "";
+  const container = document.getElementById("product-list");
+  if (!container) return;
+  container.innerHTML = "";
+
   try {
     const resp = await fetch(`${API_BASE}/products.json`);
     const productsArray = await resp.json();
+
+    // Deduplicate by ID
     const map = new Map();
     productsArray.forEach((p) => map.set(p.id, p));
     let products = Array.from(map.values()).filter(
@@ -130,44 +149,56 @@ async function displayProducts(sortKey = "newest") {
         p.description?.trim() &&
         p.image
     );
-    products.sort((a, b) =>
-      sortKey === "newest"
-        ? b.id - a.id
-        : sortKey === "oldest"
-        ? a.id - b.id
-        : a.name.localeCompare(b.name)
-    );
+
+    // Sort
+    products.sort((a, b) => {
+      if (sortKey === "newest") return b.id - a.id;
+      if (sortKey === "oldest") return a.id - b.id;
+      return a.name.localeCompare(b.name);
+    });
+
+    // Render
     const html = products
       .map(
-        (p) =>
-          `<div class="product"><img src="${API_BASE}/${p.image}" alt="${
-            p.name
-          }" onerror="this.closest('.product').remove()"><div class="product-content"><h3>${
-            p.name
-          }</h3><p>${p.description}</p></div>${
-            isAdmin
-              ? `<div class="product-buttons"><button onclick="editProduct(${
-                  p.id
-                })">Edit</button><button onclick="deleteProduct('${p.image
-                  .split("/")
-                  .pop()}')">Delete</button></div>`
-              : ""
-          }</div>`
+        (p) => `
+      <div class="product">
+        <img 
+  src="${API_BASE}/uploads/${p.image.split("/").pop()}" 
+  alt="${p.name}"
+>
+        <div class="product-content"><h3>${p.name}</h3><p>${
+          p.description
+        }</p></div>
+        ${
+          isAdmin
+            ? `<div class="product-buttons"><button onclick="editProduct(${
+                p.id
+              })">Edit</button><button onclick="deleteProduct('${p.image
+                .split("/")
+                .pop()}')">Delete</button></div>`
+            : ""
+        }
+      </div>
+    `
       )
       .join("");
-    c.innerHTML = html;
-  } catch (_) {
-    c.innerHTML = "<p>Error loading products.</p>";
+
+    container.innerHTML = html;
+  } catch (err) {
+    console.error("displayProducts error", err);
+    container.innerHTML = "<p>Error loading products.</p>";
   }
 }
 
-async function deleteProduct(fn) {
+// ─── Delete Handler ───
+async function deleteProduct(filename) {
   if (!confirm("Delete?")) return;
-  await fetch(`${API_BASE}/upload/${fn}`, { method: "DELETE" });
+  await fetch(`${API_BASE}/upload/${filename}`, { method: "DELETE" });
   displayProducts();
 }
 window.deleteProduct = deleteProduct;
 
+// ─── Edit Handler ───
 function editProduct(id) {
   window.location.href = `add-product.html?admin=true&editId=${id}`;
 }
