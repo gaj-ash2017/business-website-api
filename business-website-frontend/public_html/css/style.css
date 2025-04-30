@@ -1,0 +1,161 @@
+/* reset & box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    padding-bottom: 4rem;
+}
+
+/* layout */
+header,
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 .5rem;
+    text-decoration: none;
+}
+
+nav a.active {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* product grid */
+#product-list {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.product {
+    background: #fafafa;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.product-content {
+    margin-top: .5rem;
+}
+
+.product-buttons {
+    margin-top: .5rem;
+    text-align: right;
+}
+
+.product-buttons button {
+    margin-left: .5rem;
+}
+
+/* add-product & contact forms */
+form {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 500px;
+    margin: auto;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+input,
+textarea {
+    padding: .5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: .75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #007BFF;
+    color: #fff;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* image-row flex on index */
+.image-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.image-row img {
+    max-width: 200px;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+}
+
+/* table on contact-details */
+.contact-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.contact-table th,
+.contact-table td {
+    padding: .75rem 1rem;
+    vertical-align: top;
+}
+
+.contact-table th {
+    width: 30%;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+}
+
+.contact-details-card,
+.contact-details-card h2 {
+    margin-bottom: 1rem;
+}
+
+.product {
+    outline: 2px solid red !important;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.product {
+    outline: 2px solid red !important;
+    min-height: 100px;
+    background: rgba(255, 0, 0, 0.1) !important;
+}
