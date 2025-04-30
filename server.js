@@ -17,6 +17,11 @@ app.options("*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Ensure upload directory and products.json exist
+const uploadDir = path.join(__dirname, 'public_html', 'uploads');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+if (!fs.existsSync(dataPath)) fs.writeFileSync(dataPath, '[]');
+
 // Multer setup: store uploads in public_html/uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) =>
