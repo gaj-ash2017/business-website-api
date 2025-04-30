@@ -1,0 +1,8 @@
+# dependencies
+node_modules/
+
+# uploaded images (you don’t want to version your uploads folder)
+public_html/uploads/
+
+# logs
+*.log
