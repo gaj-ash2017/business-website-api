@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="css/style.css" />
 
     <script>
-  // force admin mode on this page
-  window.IS_ADMIN = true;
-</script>
+      // force admin mode on this page
+      window.IS_ADMIN = true;
+    </script>
   </head>
   <body>
     <header>
@@ -18,11 +18,12 @@
       <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About Us</a>
-        <a class="admin-only" href="add-product.html">Add Product</a>
-        <a href="products.html">View Products</a>
-        <a href="admin.html">Manage Products</a>
-        <a href="contact.html">Contact Form</a>
+        <a href="contact.html">Contact Us</a>
         <a href="contact-details.html">Our Contact Details</a>
+        <a href="products.html">View Products</a>
+        <!-- only show this to admins: -->
+        <a class="admin-only" href="add-product.html">Add Product</a>
+        <a class="admin-only" href="admin.html">Manage Products</a>
       </nav>
     </header>
 
